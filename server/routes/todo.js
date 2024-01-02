@@ -14,17 +14,33 @@ router.post('/todo/new', async (req, res) => {
   res.json(newTodo);
 });
 
-// router.get('/:id', async (req, res) => {
-//   const id = req.params.id;
+router.get('/todo/:id', async (req, res) => {
+  const todo = await Todo.findById(req.params.id);
 
-//   const todo = await Todo.findById(id);
+  res.json(todo);
+});
 
-//   if (todo) {
-//     res.json(todo);
-//   } else {
-//     res.status(404).send('Todo not found');
-//   }
-// });
+router.put('/todo/edit/:id', async (req, res) => {
+  const todo = await Todo.findById(req.params.id);
+
+  todo.text = req.body.text;
+  todo.description = req.body.description
+
+  todo.save();
+
+  res.json(todo);
+});
+
+router.put('/todo/complete/:id', async (req, res) => {
+  const todo = await Todo.findById(req.params.id);
+
+  todo.complete = !todo.complete;
+  // todo.complete = req.body.complete;
+
+  todo.save();
+
+  res.json(todo);
+});
 
 router.delete('/todo/delete/:id', async (req, res) => {
   const result = await Todo.findByIdAndDelete(req.params.id);
@@ -32,14 +48,5 @@ router.delete('/todo/delete/:id', async (req, res) => {
   res.json(result);
 });
 
-router.put('/todo/complete/:id', async (req, res) => {
-  const todo = await Todo.findById(req.params.id);
-
-  todo.complete = !todo.complete;
-
-  todo.save();
-
-  res.json(todo);
-});
 
 module.exports = router;
